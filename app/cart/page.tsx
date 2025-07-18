@@ -1,77 +1,142 @@
 "use client";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/useUser"; // Necesitarás implementar este hook
+import { useUser } from "@/hooks/useUser";
+import { useRouter } from "next/navigation";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { toast } from "sonner"; // Cambiamos a sonner
 
 export default function CartPage() {
   const { cart, removeFromCart, total } = useCart();
-  const { user } = useUser(); // Obtén la información del usuario
+  const { user } = useUser();
+  const router = useRouter();
 
   const handleCheckout = () => {
     if (!user) {
-      alert("Por favor inicia sesión para continuar");
+      toast.error("Por favor inicia sesión para continuar", {
+        action: {
+          label: "Iniciar sesión",
+          onClick: () => router.push("/login"),
+        },
+      });
       return;
     }
 
-    const message = `Nuevo Pedido: 
-Nombre: ${user.name}
-Teléfono: ${user.phone}
-Productos:
-${cart
-  .map(
-    (item) =>
-      `${item.name} x ${item.quantity} - Bs ${item.price * item.quantity}`
-  )
-  .join("\n")}
-Total: Bs ${total}
-Dirección: ${user.address}`;
+    const missingFields = [];
+    if (!user.name) missingFields.push("nombre");
+    if (!user.phone) missingFields.push("teléfono");
+    if (!user.address) missingFields.push("dirección");
 
-    const whatsappUrl = `https://wa.me/62640539?text=${encodeURIComponent(
-      message
-    )}`;
+    if (missingFields.length > 0) {
+      toast.error(`Información incompleta. Por favor completa tu ${missingFields.join(", ")} en tu perfil`, {
+        action: {
+          label: "Completar perfil",
+          onClick: () => router.push("/profile"),
+        },
+      });
+      return;
+    }
+
+    const productsText = cart
+      .map(item => `${item.name} x ${item.quantity} - Bs ${(item.price * item.quantity).toFixed(2)}`)
+      .join('\n');
+
+    const message = `🍰 *Nuevo Pedido - Stitch's Bakery* 🍰
+
+*Cliente:* ${user.name}
+*Teléfono:* ${user.phone}
+*Dirección:* ${user.address}
+
+*Pedido:*
+${productsText}
+
+*Total a pagar:* Bs ${total.toFixed(2)}
+
+¡Gracias por tu compra!`;
+    
+    const whatsappUrl = `https://wa.me/59162640539?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Tu Carrito</h1>
+    <div className="container mx-auto px-4 sm:px-6 py-8">
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
+            🛒 Tu Carrito
+          </CardTitle>
+        </CardHeader>
 
-      {cart.length === 0 ? (
-        <p>Tu carrito está vacío</p>
-      ) : (
-        <>
-          <div className="space-y-4">
-            {cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center border-b pb-4"
+        <CardContent>
+          {cart.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-lg">Tu carrito está vacío</p>
+              <Button 
+                onClick={() => router.push("/products")} 
+                className="mt-4 bg-pink-500 hover:bg-pink-600"
               >
-                <div>
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p>
-                    {item.quantity} x Bs {item.price.toFixed(2)}
-                  </p>
-                </div>
-                <Button
-                  variant="destructive"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Eliminar
-                </Button>
+                Ver Productos
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="divide-y">
+                {cart.map((item) => (
+                  <div key={item.id} className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-lg">{item.name}</h3>
+                      <p className="text-gray-600">
+                        {item.quantity} × Bs {item.price.toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <p className="font-medium">
+                        Bs {(item.price * item.quantity).toFixed(2)}
+                      </p>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          removeFromCart(item.id);
+                          toast.success("Producto eliminado del carrito");
+                        }}
+                        className="hover:scale-105 transition-transform"
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="mt-8">
-            <p className="text-xl font-semibold">
-              Total: Bs {total.toFixed(2)}
-            </p>
-            <Button className="mt-4" onClick={handleCheckout}>
-              Confirmar Compra
+              <div className="border-t pt-6 mt-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Total:</span>
+                  <span className="text-xl font-bold">Bs {total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+
+        {cart.length > 0 && (
+          <CardFooter className="flex flex-col sm:flex-row justify-end gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => router.push("/products")}
+              className="w-full sm:w-auto"
+            >
+              Seguir Comprando
             </Button>
-          </div>
-        </>
-      )}
+            <Button 
+              onClick={handleCheckout}
+              className="w-full sm:w-auto bg-pink-500 hover:bg-pink-600"
+            >
+              Confirmar Compra por WhatsApp
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
     </div>
   );
 }

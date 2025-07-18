@@ -1,30 +1,28 @@
-// src/components/auth/LogoutButton.tsx
-'use client';
+// (auth)/LogOutButton.tsx
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
-export function LogoutButton() {
+export function LogoutButton({ className }: { className?: string }) {
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-     alert('Sesión cerrada correctamente');
-      router.push('/login');
+      router.push("/login");
     } catch (error) {
-        alert('Error al cerrar sesión. Por favor, inténtalo de nuevo.');
-      console.error('Error al cerrar sesión:', error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
 
   return (
-    <Button 
+    <Button
       onClick={handleLogout}
-      variant="ghost"
-      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+      variant="outline"
+      className={`text-red-500 hover:text-red-700 hover:bg-red-50 ${className}`}
     >
       Cerrar Sesión
     </Button>
