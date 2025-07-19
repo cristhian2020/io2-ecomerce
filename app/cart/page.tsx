@@ -9,7 +9,7 @@ import { saveOrder } from "@/lib/saveOrder";
 
 
 export default function CartPage() {
-  const { cart, removeFromCart, total } = useCart();
+  const { cart, removeFromCart, total,clearCart } = useCart();
   const { user } = useUser();
   const router = useRouter();
 
@@ -61,10 +61,12 @@ ${productsText}
 
 ¡Gracias por tu compra!`;
 
-    const whatsappUrl = `https://wa.me/59162640539?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/59175934045?text=${encodeURIComponent(message)}`;
     
     toast.success("¡Pedido registrado exitosamente!");
     window.open(whatsappUrl, "_blank");
+    // 3. Limpiar el carrito
+    clearCart();
 
     // Redirigir al usuario o limpiar carrito (opcional)
     // clearCart(); // si tienes una función en useCart

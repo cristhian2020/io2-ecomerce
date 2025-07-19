@@ -63,10 +63,16 @@ export function useCart() {
     );
   };
 
+  const clearCart =()=>{
+    setCart([]);
+    localStorage.removeItem("cart");
+
+  }
+
   const total = cart.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity, 
     0
   );
 
-  return { cart, addToCart, removeFromCart, total };
+  return { cart, addToCart, removeFromCart, total, clearCart };
 }

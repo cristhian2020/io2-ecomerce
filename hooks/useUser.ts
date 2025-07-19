@@ -13,6 +13,7 @@ interface UserData {
   phone: string;
   address: string;
   email: string;
+  role: string;
 }
 
 export function useUser() {
@@ -32,7 +33,8 @@ export function useUser() {
               name: userData.name || firebaseUser.displayName || 'Usuario',
               phone: userData.phone || '',
               address: userData.address || '',
-              email: userData.email || firebaseUser.email || ''
+              email: userData.email || firebaseUser.email || '',
+              role: userData.role || 'customer' // Asignar un rol por defecto
             });
           } else {
             // Si no existe el documento, lo creamos con datos básicos
@@ -41,7 +43,8 @@ export function useUser() {
               phone: '',
               address: '',
               email: firebaseUser.email || '',
-              createdAt: new Date()
+              createdAt: new Date(),
+              role: 'customer' // Asignar un rol por defecto
             };
             
             await setDoc(doc(db, "users", firebaseUser.uid), newUserData);
@@ -58,7 +61,8 @@ export function useUser() {
             name: firebaseUser.displayName || 'Usuario',
             phone: '',
             address: '',
-            email: firebaseUser.email || ''
+            email: firebaseUser.email || '',
+            role: 'customer' // Asignar un rol por defecto
           });
         }
       } else {

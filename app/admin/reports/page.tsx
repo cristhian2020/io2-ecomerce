@@ -37,6 +37,12 @@ export default async function ReportsPage() {
     where("createAt", ">=", Timestamp.fromDate(today))
   );
 
+  const formateador = new Intl.DateTimeFormat("es-BO", {
+   dateStyle: 'full',
+  timeStyle: 'short',
+
+  });
+
   const dailyOrdersSnapshot = await getDocs(dailyQuery);
   const dailyOrders: Order[] = dailyOrdersSnapshot.docs.map(doc => {
     const data = doc.data();
@@ -177,7 +183,8 @@ export default async function ReportsPage() {
         className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm"
       >
         <p className="text-sm text-gray-500 mb-1">
-          Fecha: {order.createAt.toLocaleString()}
+          {/* Fecha: {order.createAt.toLocaleString()} */}
+          Fecha: {formateador.format(order.createAt)}
         </p>
         <p><strong>Cliente:</strong> {order.customer?.name}</p>
         <p><strong>Teléfono:</strong> {order.customer?.phone}</p>

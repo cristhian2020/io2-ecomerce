@@ -4,7 +4,7 @@ import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 export async function saveOrder(user: any, cart: any[], shipping: number = 0) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + shipping;
+  const total = subtotal ;
 
   const orderData = {
     userId: user.uid,
