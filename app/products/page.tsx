@@ -34,6 +34,12 @@ export default async function ProductsPage() {
             >
               Carrito
             </Link>
+             <Link 
+              href="/admin/reports" 
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors text-center w-full sm:w-auto"
+            >
+              Reportes
+            </Link>
           </div>
           <div className="flex justify-end">
             <LogoutButton className="w-full sm:w-auto"/>
