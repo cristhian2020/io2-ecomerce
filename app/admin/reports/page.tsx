@@ -184,7 +184,7 @@ export default async function ReportsPage() {
       >
         <p className="text-sm text-gray-500 mb-1">
           {/* Fecha: {order.createAt.toLocaleString()} */}
-          Fecha: {formateador.format(order.createAt)}
+          {/* Fecha: {formateador.format(order.createAt)} */}
         </p>
         <p><strong>Cliente:</strong> {order.customer?.name}</p>
         <p><strong>Teléfono:</strong> {order.customer?.phone}</p>
