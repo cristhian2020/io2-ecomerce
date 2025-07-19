@@ -66,8 +66,9 @@ ${productsText}
     toast.success("¡Pedido registrado exitosamente!");
     window.open(whatsappUrl, "_blank");
     // 3. Limpiar el carrito
+    localStorage.removeItem("cart");
+    localStorage.removeItem("user");
     clearCart();
-
     // Redirigir al usuario o limpiar carrito (opcional)
     // clearCart(); // si tienes una función en useCart
     // router.push("/success");
