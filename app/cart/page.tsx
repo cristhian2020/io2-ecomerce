@@ -5,38 +5,45 @@ import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner"; // Cambiamos a sonner
+import { saveOrder } from "@/lib/saveOrder";
+
 
 export default function CartPage() {
   const { cart, removeFromCart, total } = useCart();
   const { user } = useUser();
   const router = useRouter();
 
-  const handleCheckout = () => {
-    if (!user) {
-      toast.error("Por favor inicia sesión para continuar", {
-        action: {
-          label: "Iniciar sesión",
-          onClick: () => router.push("/login"),
-        },
-      });
-      return;
-    }
+  const handleCheckout = async () => {
+  if (!user) {
+    toast.error("Por favor inicia sesión para continuar", {
+      action: {
+        label: "Iniciar sesión",
+        onClick: () => router.push("/login"),
+      },
+    });
+    return;
+  }
 
-    const missingFields = [];
-    if (!user.name) missingFields.push("nombre");
-    if (!user.phone) missingFields.push("teléfono");
-    if (!user.address) missingFields.push("dirección");
+  const missingFields = [];
+  if (!user.name) missingFields.push("nombre");
+  if (!user.phone) missingFields.push("teléfono");
+  if (!user.address) missingFields.push("dirección");
 
-    if (missingFields.length > 0) {
-      toast.error(`Información incompleta. Por favor completa tu ${missingFields.join(", ")} en tu perfil`, {
-        action: {
-          label: "Completar perfil",
-          onClick: () => router.push("/profile"),
-        },
-      });
-      return;
-    }
+  if (missingFields.length > 0) {
+    toast.error(`Información incompleta. Por favor completa tu ${missingFields.join(", ")} en tu perfil`, {
+      action: {
+        label: "Completar perfil",
+        onClick: () => router.push("/profile"),
+      },
+    });
+    return;
+  }
 
+  try {
+    // 1. Guardar la orden en Firebase
+    await saveOrder(user, cart, 5); // 5 = costo de envío fijo, puedes hacerlo dinámico
+
+    // 2. Preparar mensaje para WhatsApp
     const productsText = cart
       .map(item => `${item.name} x ${item.quantity} - Bs ${(item.price * item.quantity).toFixed(2)}`)
       .join('\n');
@@ -53,10 +60,22 @@ ${productsText}
 *Total a pagar:* Bs ${total.toFixed(2)}
 
 ¡Gracias por tu compra!`;
-    
+
     const whatsappUrl = `https://wa.me/59162640539?text=${encodeURIComponent(message)}`;
+    
+    toast.success("¡Pedido registrado exitosamente!");
     window.open(whatsappUrl, "_blank");
-  };
+
+    // Redirigir al usuario o limpiar carrito (opcional)
+    // clearCart(); // si tienes una función en useCart
+    // router.push("/success");
+
+  } catch (error) {
+    console.error("Error al guardar el pedido:", error);
+    toast.error("Ocurrió un error al guardar tu pedido. Inténtalo nuevamente.");
+  }
+};
+
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8">
