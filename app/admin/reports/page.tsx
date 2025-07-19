@@ -1,6 +1,8 @@
+export const dynamic = "force-dynamic";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 
 interface OrderItem {
   productId: string;
