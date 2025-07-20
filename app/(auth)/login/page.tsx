@@ -30,7 +30,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-start justify-center min-h-screen px-4">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Stitch's Bakery</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">CrocCup Store</h2>
         <h1 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h1>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <Input
