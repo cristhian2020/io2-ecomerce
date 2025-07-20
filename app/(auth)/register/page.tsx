@@ -105,6 +105,9 @@ export default function RegisterPage() {
               setFormData({ ...formData, password: e.target.value })
             }
           />
+          <p className="mt-2 text-sm text-center text-pink-600">
+            La contraseña debe tener al menos 6 caracteres. 
+          </p>
           <Button type="submit" className="mt-6 w-full bg-[#F0427D] text-white" >
             Registrar
           </Button>
