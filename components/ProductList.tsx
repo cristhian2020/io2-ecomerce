@@ -4,6 +4,7 @@
 import { useCart } from "@/hooks/useCart";
 import { Button } from "./ui/button";
 import { Product } from "@/types/products";
+import img1 from "@/public/img1.jpeg";
 
 export function ProductList({ products }: { products: Product[] }) {
   const { addToCart } = useCart();
@@ -16,9 +17,10 @@ export function ProductList({ products }: { products: Product[] }) {
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
       {products.map(product => (
         <div key={product.id} className="border rounded-lg p-4">
-          <img src={product.image} alt={product.name} className="w-full h-48 object-cover mb-4"/>
+          <img src={img1.src} alt={product.name} className="w-full h-48 object-cover mb-4"/>
           <h2 className="text-xl font-semibold">{product.name}</h2>
           <p className="text-gray-800 ">{product.description}</p>
           <p className="text-gray-600 mb-2">Bs {product.price}</p>
